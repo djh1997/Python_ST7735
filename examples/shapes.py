@@ -27,7 +27,14 @@ import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 
 from random import randint
+import picamera
+import picamera.array
+from time import sleep
+from math import sqrt
+from skimage import data
+from skimage.feature import blob_doh
 
+camera = picamera.PiCamera()
 
 WIDTH = 128
 HEIGHT = 160
@@ -57,6 +64,12 @@ disp = TFT.ST7735(
         SPI_PORT,
         SPI_DEVICE,
         max_speed_hz=SPEED_HZ))
+
+
+camera.color_effects=(128,128)
+camera.resolution = (640,480)
+camera.capture('image1.jpg')
+blobs_doh = blob_doh('image1.jpg', max_sigma=30, threshold=.01)
 
 def randomPointGenerator(num):
     global points2
@@ -106,4 +119,4 @@ for x in range(60):
     randomPointGenerator(7)
 
     disp.display()
-
+camera.close()
