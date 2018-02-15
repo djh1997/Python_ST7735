@@ -29,8 +29,8 @@ import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 
 
-# SPI_CLOCK_HZ = 64000000 # 64 MHz
-SPI_CLOCK_HZ = 4000000 # 4 MHz
+SPI_CLOCK_HZ = 64000000 # 64 MHz
+#SPI_CLOCK_HZ = 4000000 # 4 MHz
 
 
 # Constants for interacting with display registers.
@@ -187,23 +187,23 @@ class ST7735(object):
     def _init(self):
         # Initialize the display.  Broken out as a separate function so it can
         # be overridden by other displays in the future.
-        
+
         self.command(ST7735_SWRESET) # Software reset
         time.sleep(0.150) # delay 150 ms
-        
+
         self.command(ST7735_SLPOUT) # Out of sleep mode
         time.sleep(0.500) # delay 500 ms
-        
+
         self.command(ST7735_FRMCTR1) # Frame rate ctrl - normal mode
         self.data(0x01) # Rate = fosc/(1x2+40) * (LINE+2C+2D)
         self.data(0x2C)
         self.data(0x2D)
-        
+
         self.command(ST7735_FRMCTR2) # Frame rate ctrl - idle mode
         self.data(0x01) # Rate = fosc/(1x2+40) * (LINE+2C+2D)
         self.data(0x2C)
         self.data(0x2D)
-        
+
         self.command(ST7735_FRMCTR3) # Frame rate ctrl - partial mode
         self.data(0x01) # Dot inversion mode
         self.data(0x2C)
@@ -211,54 +211,54 @@ class ST7735(object):
         self.data(0x01) # Line inversion mode
         self.data(0x2C)
         self.data(0x2D)
-        
+
         self.command(ST7735_INVCTR) # Display inversion ctrl
         self.data(0x07) # No inversion
-        
+
         self.command(ST7735_PWCTR1) # Power control
         self.data(0xA2)
         self.data(0x02) # -4.6V
         self.data(0x84) # auto mode
-        
+
         self.command(ST7735_PWCTR2) # Power control
         self.data(0x0A) # Opamp current small
         self.data(0x00) # Boost frequency
-        
+
         self.command(ST7735_PWCTR4) # Power control
         self.data(0x8A) # BCLK/2, Opamp current small & Medium low
         self.data(0x2A)
-        
+
         self.command(ST7735_PWCTR5) # Power control
         self.data(0x8A)
         self.data(0xEE)
-        
+
         self.command(ST7735_VMCTR1) # Power control
         self.data(0x0E)
-        
+
         self.command(ST7735_INVOFF) # Don't invert display
-        
+
         self.command(ST7735_MADCTL) # Memory access control (directions)
         self.data(0xC8) # row addr/col addr, bottom to top refresh
-        
+
         self.command(ST7735_COLMOD) # set color mode
         self.data(0x05) # 16-bit color
-        
+
         #
-        
+
         self.command(ST7735_CASET) # Column addr set
         self.data(0x00) # XSTART = 0
         self.data(0x00)
         self.data(0x00) # XEND = 127
         self.data(0x7F)
-        
+
         self.command(ST7735_RASET) # Row addr set
         self.data(0x00) # XSTART = 0
         self.data(0x00)
         self.data(0x00) # XEND = 159
         self.data(0x9F)
-        
+
         #
-        
+
         self.command(ST7735_GMCTRP1) # Set Gamma
         self.data(0x02)
         self.data(0x1c)
@@ -276,7 +276,7 @@ class ST7735(object):
         self.data(0x01)
         self.data(0x03)
         self.data(0x10)
-        
+
         self.command(ST7735_GMCTRN1) # Set Gamma
         self.data(0x03)
         self.data(0x1d)
@@ -294,10 +294,10 @@ class ST7735(object):
         self.data(0x00)
         self.data(0x02)
         self.data(0x10)
-        
+
         self.command(ST7735_NORON) # Normal display on
         time.sleep(0.10) # 10 ms
-        
+
         self.command(ST7735_DISPON) # Display on
         time.sleep(0.100) # 100 ms
 
@@ -350,7 +350,7 @@ class ST7735(object):
         # Write data to hardware.
         self.data(pixelbytes)
 
-    def clear(self, color=(0,0,0)):
+    def clear(self, color=(255,255,255)):
         """Clear the image buffer to the specified RGB color (default black)."""
         width, height = self.buffer.size
         self.buffer.putdata([color]*(width*height))

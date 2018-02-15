@@ -26,10 +26,12 @@ import ST7735 as TFT
 import Adafruit_GPIO as GPIO
 import Adafruit_GPIO.SPI as SPI
 
+from random import randint
+
 
 WIDTH = 128
 HEIGHT = 160
-SPEED_HZ = 4000000
+SPEED_HZ = 64000000
 
 
 # Raspberry Pi configuration.
@@ -37,9 +39,10 @@ DC = 24
 RST = 25
 SPI_PORT = 0
 SPI_DEVICE = 0
-points=[[15,15,5,20],
-        [50,50,10,60]]
-
+points=[[15,15,5,50],
+        [50,50,10,200]]
+points2=[[70,60,20,40],
+        [30,80,10,200]]
 # BeagleBone Black configuration.
 # DC = 'P9_15'
 # RST = 'P9_12'
@@ -55,15 +58,18 @@ disp = TFT.ST7735(
         SPI_DEVICE,
         max_speed_hz=SPEED_HZ))
 
+def randomPointGenerator(num):
+    global points2
+    points2=[]
+    for i in range(num):
+        points2.append([randint(0,129),randint(0,161),randint(0,10),randint(0,255)])
+
+
 # Initialize display.
 disp.begin()
 
-# Clear the display to a white background.
-# Can pass any tuple of red, green, blue values (from 0 to 255 each).
-disp.clear((255,255,255))
 
-# Alternatively can clear to a black screen by calling:
-# disp.clear()
+disp.clear((255,255,255)) 
 
 # Get a PIL Draw object to start drawing on the display buffer.
 draw = disp.draw()
@@ -77,7 +83,27 @@ for i in range(0,len(points)):
     x2=points[i][0]+points[i][2]
     y1=points[i][1]-points[i][2]
     y2=points[i][1]+points[i][2]
-    colour=255/points[i][3]
-    draw.ellipse((x1,y1,x2,y2),fill=(200,200,200))
+    colour=points[i][3]
+    draw.ellipse((x1,y1,x2,y2),fill=(colour,colour,colour))
 
 disp.display()
+
+for x in range(60):
+
+    disp.clear((255,255,255)) 
+
+    # Get a PIL Draw object to start drawing on the display buffer.
+    draw = disp.draw()
+
+    for i in range(0,len(points2)):
+
+        x1=points2[i][0]-points2[i][2]
+        x2=points2[i][0]+points2[i][2]
+        y1=points2[i][1]-points2[i][2]
+        y2=points2[i][1]+points2[i][2]
+        colour=points2[i][3]
+        draw.ellipse((x1,y1,x2,y2),fill=(colour,colour,colour))
+    randomPointGenerator(7)
+
+    disp.display()
+
