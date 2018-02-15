@@ -37,6 +37,8 @@ DC = 24
 RST = 25
 SPI_PORT = 0
 SPI_DEVICE = 0
+points=[[15,15,5,20],
+        [50,50,10,60]]
 
 # BeagleBone Black configuration.
 # DC = 'P9_15'
@@ -68,6 +70,14 @@ draw = disp.draw()
 
 # Draw some shapes.
 # Draw a blue ellipse with a green outline.
-draw.ellipse((10, 10, 20, 20),fill=(200,200,200))
+#draw.ellipse((10, 10, 20, 20),fill=(200,200,200))
+for i in range(0,len(points)):
+
+    x1=points[i][0]-points[i][2]
+    x2=points[i][0]+points[i][2]
+    y1=points[i][1]-points[i][2]
+    y2=points[i][1]+points[i][2]
+    colour=255/points[i][3]
+    draw.ellipse((x1,y1,x2,y2),fill=(200,200,200))
 
 disp.display()
