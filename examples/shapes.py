@@ -29,34 +29,24 @@ import Adafruit_GPIO.SPI as SPI
 from random import randint
 import picamera
 import picamera.array
-from time import sleep
+from time import sleep, time
 from math import sqrt
 from skimage import data
 from skimage.feature import blob_doh
 from skimage.io import imread
 
-
-
 WIDTH = 128
 HEIGHT = 160
-SPEED_HZ = 64000000
-
+SPEED_HZ = 640000000
 
 # Raspberry Pi configuration.
 DC = 24
 RST = 25
 SPI_PORT = 0
 SPI_DEVICE = 0
-points=[]
-points2=[[120,160,20,34],
-        [160,120,10,100]]
-# BeagleBone Black configuration.
-# DC = 'P9_15'
-# RST = 'P9_12'
-# SPI_PORT = 1
-# SPI_DEVICE = 0
 
-# Create TFT LCD display class.
+points=[]
+
 disp = TFT.ST7735(
     DC,
     rst=RST,
@@ -65,30 +55,14 @@ disp = TFT.ST7735(
         SPI_DEVICE,
         max_speed_hz=SPEED_HZ))
 
-
-def randomPointGenerator(num):
-    global points2
-    points2=[]
-    for i in range(num):
-        points2.append([randint(0,129),randint(0,161),randint(0,10),randint(0,100)])
-        
-# with picamera.PiCamera() as camera:
-#     with picamera.array.PiRGBArray(camera) as output:
-#         camera.color_effects=(128,128)
-#         camera.resolution = (640,480)
-#         camera.capture(output, 'rgb')
-#         print('Captured %dx%d image' % (output.array.shape[1], output.array.shape[0]))
-#         print('000000000000')
-#         print(output.array[0])
-#         print('11111111111111')
-#         print(output.array[1])
-
 camera = picamera.PiCamera()
 camera.color_effects=(128,128)
 camera.resolution = (160,128)
+camera.start_preview()
 
 for k in range(100):
-    
+    print(k)
+    start=time()
     camera.capture('image1.jpg')
     img1=imread('image1.jpg',as_grey=True)
 
@@ -96,21 +70,14 @@ for k in range(100):
     points=[]
     for i in range(len(blobs_doh)):
         points.append([blobs_doh[i][0],blobs_doh[i][1],blobs_doh[i][1]/2,50])
-        
+
     print(points)
     print('@')
-
     # Initialize display.
     disp.begin()
-
-    disp.clear((255,255,255)) 
-
-    # Get a PIL Draw object to start drawing on the display buffer.
+    disp.clear((255,255,255))
     draw = disp.draw()
 
-    # Draw some shapes.
-    # Draw a blue ellipse with a green outline.
-    #draw.ellipse((10, 10, 20, 20),fill=(200,200,200))
     for i in range(0,len(points)):
 
         x1=int(points[i][0]-points[i][2])
@@ -121,25 +88,10 @@ for k in range(100):
         draw.ellipse((x1,y1,x2,y2),fill=(colour,colour,colour))
 
     disp.display()
-
-# for x in range(60):
-# 
-#     disp.clear((255,255,255)) 
-# 
-#     # Get a PIL Draw object to start drawing on the display buffer.
-#     draw = disp.draw()
-# 
-#     for i in range(0,len(points2)):
-# 
-#         x1=points2[i][0]-points2[i][2]
-#         x2=points2[i][0]+points2[i][2]
-#         y1=points2[i][1]-points2[i][2]
-#         y2=points2[i][1]+points2[i][2]
-#         colour=int(2.55*points2[i][3])
-#         draw.ellipse((x1,y1,x2,y2),fill=(colour,colour,colour))
-#         randomPointGenerator(7)
-# 
-#     disp.display()
+    end=time()
+    print(end-start)
 
 
+
+camera.stop_preview()
 camera.close()
